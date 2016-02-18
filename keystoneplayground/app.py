@@ -12,8 +12,8 @@
 
 from oslo_config import cfg
 
-import api
 import config
+import server
 
 CONF = cfg.CONF
 
@@ -22,7 +22,7 @@ def main():
     config.parse_args()
     host = CONF.keystoneplayground.host
     port = CONF.keystoneplayground.port
-    apiServer = api.ApiServer(host, port)
+    apiServer = server.Server(host, port)
     apiServer.serve()
 
 if __name__ == '__main__':

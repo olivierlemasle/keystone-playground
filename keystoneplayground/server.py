@@ -10,26 +10,25 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import os
+
+from paste.deploy import loadapp
 from paste import httpserver
-from paste.request import parse_formvars
+
+from oslo_config import cfg
+
+CONF = cfg.CONF
 
 
-class ApiServer(object):
+class Server(object):
 
     def __init__(self, host, port):
         self.host = host
         self.port = port
 
     def serve(self):
+        config_file = 'keystone-playground-paste.ini'
+        config_file_path = CONF.find_file(config_file)
+        config_file_path = os.path.abspath(config_file_path)
+        app = loadapp("config:%s" % config_file_path)
         httpserver.serve(app, host=self.host, port=self.port)
-
-
-def app(environ, start_response):
-    fields = parse_formvars(environ)
-    if environ['REQUEST_METHOD'] == 'POST':
-        start_response('200 OK', [('content-type', 'text/html')])
-        return ['Hello, ', fields['name'], '!']
-    else:
-        start_response('200 OK', [('content-type', 'text/html')])
-        return ['<form method="POST">Name: <input type="text" '
-                'name="name"><input type="submit"></form>']

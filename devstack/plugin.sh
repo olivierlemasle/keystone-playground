@@ -39,6 +39,8 @@ function configure_keystone-playground {
                           --namespace keystoneplayground \
                           > $KEYSTONE_PLAYGROUND_CONF_FILE
 
+    cp $KEYSTONE_PLAYGROUND_DIR/etc/keystone-playground-paste.ini $KEYSTONE_PLAYGROUND_CONF_DIR
+
     # Setup keystone_authtoken section
     iniset $KEYSTONE_PLAYGROUND_CONF_FILE keystone_authtoken auth_uri "http://${KEYSTONE_AUTH_HOST}:5000/v2.0"
     iniset $KEYSTONE_PLAYGROUND_CONF_FILE keystone_authtoken auth_host $KEYSTONE_AUTH_HOST
