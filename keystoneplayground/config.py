@@ -27,7 +27,7 @@ keystoneplaygroundOpts = [
 
 keystoneplaygroundGroup = cfg.OptGroup(name='keystoneplayground',
                                        title='Keystone Playground settings',
-                                       help='AKeystone Playground settings')
+                                       help='Keystone Playground settings')
 
 CONF = cfg.CONF
 CONF.register_opts(keystoneplaygroundOpts, group=keystoneplaygroundGroup)
@@ -35,7 +35,7 @@ CONF.register_opts(keystoneplaygroundOpts, group=keystoneplaygroundGroup)
 
 def parse_args(args=None, usage=None, default_config_files=None):
     CONF(args=sys.argv[1:],
-         project='keystoneplayground',
+         project='keystone-playground',
          version=keystoneplayground.__version__,
          usage=usage,
          default_config_files=default_config_files)

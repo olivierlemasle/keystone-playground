@@ -35,8 +35,9 @@ function configure_keystone-playground {
     mkdir_chown_stack "$KEYSTONE_PLAYGROUND_CONF_DIR"
 
     # Generate keystone-playground configuration file and configure common parameters.
-    oslo-config-generator --namespace keystonemiddleware.auth_token \
-                          --namespace keystoneplayground \
+    oslo-config-generator --namespace keystoneplayground \
+                          --namespace keystonemiddleware.auth_token \
+                          --namespace oslo.middleware.cors \
                           > $KEYSTONE_PLAYGROUND_CONF_FILE
 
     cp $KEYSTONE_PLAYGROUND_DIR/etc/keystone-playground-paste.ini $KEYSTONE_PLAYGROUND_CONF_DIR
