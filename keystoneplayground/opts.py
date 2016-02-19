@@ -10,7 +10,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import config
+from keystoneplayground.common import config
 
 _opt_lists = [(config.keystoneplaygroundGroup, config.keystoneplaygroundOpts)]
 
