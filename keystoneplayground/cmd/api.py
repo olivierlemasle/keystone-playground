@@ -10,10 +10,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from oslo_config import cfg
+import os
 
-import config
-import server
+from oslo_config import cfg
+from paste.deploy import loadapp
+from paste import httpserver
+
+from keystoneplayground import config
 
 CONF = cfg.CONF
 
@@ -22,8 +25,11 @@ def main():
     config.parse_args()
     host = CONF.keystoneplayground.host
     port = CONF.keystoneplayground.port
-    apiServer = server.Server(host, port)
-    apiServer.serve()
+    config_file = 'keystone-playground-paste.ini'
+    config_file_path = CONF.find_file(config_file)
+    config_file_path = os.path.abspath(config_file_path)
+    app = loadapp("config:%s" % config_file_path)
+    httpserver.serve(app, host=host, port=port)
 
 if __name__ == '__main__':
     main()
