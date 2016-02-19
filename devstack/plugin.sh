@@ -26,9 +26,27 @@ function mkdir_chown_stack {
     sudo chown $STACK_USER "$1"
 }
 
+# create_keystone-playground_account() - Set up required Keystone user
+#
+# Project     User                    Roles
+# --------------------------------------------
+# service     keystone-playground     admin
+function create_keystone-playground_user() {
+    if ! is_service_enabled key; then
+        return
+    fi
 
-# Entry points
-# ------------
+    create_service_user $KEYSTONE_PLAYGROUND_ADMIN_USER
+
+    if [[ "$KEYSTONE_CATALOG_BACKEND" = 'sql' ]]; then
+        get_or_create_service "keystoneplayground" "keystone-playground" "Keystone Playground"
+        get_or_create_endpoint "keystone-playground" \
+            "$REGION_NAME" \
+            "$KEYSTONE_PLAYGROUND_SERVICE_PROTOCOL://$KEYSTONE_PLAYGROUND_SERVICE_HOST:$KEYSTONE_PLAYGROUND_SERVICE_PORT" \
+            "$KEYSTONE_PLAYGROUND_SERVICE_PROTOCOL://$KEYSTONE_PLAYGROUND_SERVICE_HOST:$KEYSTONE_PLAYGROUND_SERVICE_PORT" \
+            "$KEYSTONE_PLAYGROUND_SERVICE_PROTOCOL://$KEYSTONE_PLAYGROUND_SERVICE_HOST:$KEYSTONE_PLAYGROUND_SERVICE_PORT"
+    fi
+}
 
 # configure_keystone-playground() - Set config files, create data dirs, etc
 function configure_keystone-playground {
@@ -84,6 +102,7 @@ if is_service_enabled keystone-playground; then
     elif [[ "$1" == "stack" && "$2" == "post-config" ]]; then
         echo_summary "Configuring keystone-playground"
         configure_keystone-playground
+        create_keystone-playground_user
     elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
         echo_summary "Initializing keystone-playground"
         start_keystone-playground

@@ -13,6 +13,7 @@
 import os
 
 from oslo_config import cfg
+from oslo_log import log as logging
 from paste.deploy import loadapp
 from paste import httpserver
 
@@ -23,6 +24,7 @@ CONF = cfg.CONF
 
 def main():
     config.parse_args()
+    logging.setup(CONF, 'keystone-playground')
     host = CONF.keystoneplayground.host
     port = CONF.keystoneplayground.port
     config_file = 'keystone-playground-paste.ini'

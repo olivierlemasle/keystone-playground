@@ -13,6 +13,7 @@
 import sys
 
 from oslo_config import cfg
+from oslo_log import log as logging
 
 import keystoneplayground
 
@@ -34,6 +35,7 @@ CONF.register_opts(keystoneplaygroundOpts, group=keystoneplaygroundGroup)
 
 
 def parse_args(args=None, usage=None, default_config_files=None):
+    logging.register_options(CONF)
     CONF(args=sys.argv[1:],
          project='keystone-playground',
          version=keystoneplayground.__version__,
