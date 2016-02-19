@@ -17,7 +17,7 @@ from oslo_log import log as logging
 from paste.deploy import loadapp
 from paste import httpserver
 
-from keystoneplayground import config
+from keystoneplayground.common import config
 
 CONF = cfg.CONF
 
