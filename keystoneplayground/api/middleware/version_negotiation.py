@@ -27,14 +27,10 @@ LOG = logging.getLogger(__name__)
 
 
 class VersionNegotiationFilter(wsgi.Middleware):
-    @classmethod
-    def factory(cls, global_conf, **local_conf):
-        def filter(app):
-            return cls(app)
-        return filter
 
     def __init__(self, app):
         self.versions_app = versions.Controller()
+        self.vnd_mime_type = 'application/vnd.openstack.keystoneplayground.'
         super(VersionNegotiationFilter, self).__init__(app)
 
     def process_request(self, req):
@@ -43,9 +39,15 @@ class VersionNegotiationFilter(wsgi.Middleware):
                    "Accept: {accept}").format(method=req.method,
                                               path=req.path,
                                               accept=req.accept))
-        LOG.debug("Using url versioning")
-        # Remove version in url so it doesn't conflict later
-        req_version = self._pop_path_info(req)
+
+        req_version = self._get_version_from_header(req)
+        if req_version:
+            LOG.debug("Using media-type versioning")
+
+        else:
+            LOG.debug("Using url versioning")
+            # Remove version in url so it doesn't conflict later
+            req_version = self._pop_path_info(req)
 
         try:
             version = self._match_version_string(req_version)
@@ -58,6 +60,19 @@ class VersionNegotiationFilter(wsgi.Middleware):
         LOG.debug("Matched version: v{version}".format(version=version))
         LOG.debug('new path {path}'.format(path=req.path_info))
         return None
+
+    def _get_version_from_header(self, req):
+        accept = str(req.accept)
+        if accept.startswith(self.vnd_mime_type):
+            # Example: application/vnd.openstack.keystoneplayground.v1+json
+            token_loc = len(self.vnd_mime_type)
+            idx_suffix = accept.rfind('+')
+            if idx_suffix == -1:
+                return accept[token_loc:]
+            else:
+                return accept[token_loc:idx_suffix]
+        else:
+            return None
 
     def _match_version_string(self, subject):
         """Given a string, tries to match a major and/or minor version number.

@@ -24,6 +24,12 @@ class Middleware(object):
     behavior.
     """
 
+    @classmethod
+    def factory(cls, global_conf, **local_conf):
+        def filter(app):
+            return cls(app)
+        return filter
+
     def __init__(self, application):
         self.application = application
 
