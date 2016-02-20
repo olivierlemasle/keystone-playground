@@ -39,6 +39,9 @@ class VersionNegotiationFilter(wsgi.Middleware):
                    "Accept: {accept}").format(method=req.method,
                                               path=req.path,
                                               accept=req.accept))
+        if req.path_info == '/':
+            # Pass this middleware (to versions controller)
+            return None
 
         req_version = self._get_version_from_header(req)
         if req_version:
@@ -101,5 +104,5 @@ class VersionNegotiationFilter(wsgi.Middleware):
         if idx == -1:
             idx = len(path)
         r = path[:idx]
-        req.path_info = path[idx:]
+        req.path_info = path[idx:] or '/'
         return r

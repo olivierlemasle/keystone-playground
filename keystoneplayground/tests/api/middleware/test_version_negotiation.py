@@ -78,3 +78,11 @@ class TestVersionNegotiationFilter(base.TestCase):
         app = middleware.process_request(request)
         self.assertEqual(http_client.MULTIPLE_CHOICES,
                          app.__call__(request).status_code)
+
+    def test_version_index(self):
+        middleware = version_negotiation.VersionNegotiationFilter(None)
+        h = {'Accept': 'application/json'}
+        request = webob.Request.blank('/v1', headers=h)
+        middleware.process_request(request)
+        self.assertEqual('/v1/',
+                         request.path_info)
