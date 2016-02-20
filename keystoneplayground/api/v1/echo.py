@@ -10,28 +10,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from oslo_serialization import jsonutils
-from six.moves import http_client
-import webob.dec
+from keystoneplayground.common import wsgi
 
 
 class Controller(object):
 
     """echo controller"""
 
-    def index(self, req):
+    def default(self, req):
         headers = req.headers.items()
-
-        response = webob.Response(request=req,
-                                  status=http_client.OK,
-                                  content_type='application/json')
-        response.body = jsonutils.dumps(dict(headers=headers))
-        return response
-
-    @webob.dec.wsgify(RequestClass=webob.Request)
-    def __call__(self, req):
-        return self.index(req)
+        return dict(headers=headers)
 
 
 def create_resource():
-    return Controller()
+    return wsgi.Resource(Controller())
